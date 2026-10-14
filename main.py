@@ -10,7 +10,13 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-df = pl.read_parquet("./data/dash_data.parquet")
+
+@st.cache_data
+def load_data(path: str) -> pl.DataFrame:
+    return pl.read_parquet(path)
+
+
+df = load_data("./data/dash_data.parquet")
 
 if "worst_toggle" not in st.session_state:
     st.session_state.worst_toggle = False
@@ -51,17 +57,6 @@ with st.container(horizontal=True, horizontal_alignment="center"):
             options=sorted(df["county"].drop_nulls().unique().to_list()),
         )
 
-    with st.container(border=True):
-        selected_degree_levels = st.multiselect(
-            "Filter by degree level",
-            options=sorted(df["degree_level"].drop_nulls().unique().to_list()),
-            default=["Bachelor's", "Master's", "Doctoral"],
-        )
-        selected_fields = st.multiselect(
-            "Filter by field of study",
-            options=sorted(df["field"].drop_nulls().unique().to_list()),
-        )
-
     with st.container():
         with st.container(border=True):
             selected_institutions = st.multiselect(
@@ -72,11 +67,43 @@ with st.container(horizontal=True, horizontal_alignment="center"):
             "Data points representing small samples are suppressed for privacy in the original dataset, and are marked as such."
         )
 
+        df = df.filter(
+            pl.col("institution").is_in(selected_institutions or pl.col("institution"))
+        )
+
+    with st.container(border=True):
+        selected_degree_levels = st.multiselect(
+            "Filter by degree level",
+            options=[
+                "Associate's",
+                "Bachelor's",
+                "Doctoral",
+                "First professional degree",
+                "Graduate/professional certificate",
+                "Master's",
+                "Post-baccalaureate certificate",
+                "Ugrd. certificate/diploma",
+            ],
+            default=["Bachelor's", "Master's", "Doctoral"],
+        )
+
+        df = df.filter(
+            pl.col("degree_level").is_in(
+                selected_degree_levels or pl.col("degree_level")
+            )
+        )
+
+        selected_fields = st.multiselect(
+            "Filter by field of study",
+            options=sorted(df["field"].drop_nulls().unique().to_list()),
+        )
+
+
 df = (
     df.filter(
-        pl.col("institution").is_in(selected_institutions or pl.col("institution")),
+        # pl.col("institution").is_in(selected_institutions or pl.col("institution")),
         pl.col("county").is_in(selected_counties or pl.col("county")),
-        pl.col("degree_level").is_in(selected_degree_levels or pl.col("degree_level")),
+        # pl.col("degree_level").is_in(selected_degree_levels or pl.col("degree_level")),
         pl.col("field").is_in(selected_fields or pl.col("field")),
     )
     .with_columns(
