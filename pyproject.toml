@@ -1,0 +1,14 @@
+[project]
+name = "college-scorecard"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "marimo>=0.17.6",
+    "polars>=1.36.1",
+    "ruff>=0.17.0",
+    "streamlit>=1.50.0",
+    "streamlit-pivot>=0.6.0",
+    "us>=4.0.0",
+]

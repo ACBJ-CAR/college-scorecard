@@ -1,0 +1,77 @@
+[theme]
+base = "light"
+primaryColor = "#256788"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#EEF3F7"
+textColor = "#222222"
+redColor = "#B73A3A"
+orangeColor = "#BA6036"
+yellowColor = "#D79A2B"
+blueColor = "#256788"
+greenColor = "#2A7A45"
+violetColor = "#6B4CA5"
+grayColor = "#7A838C"
+redBackgroundColor = "#F9E6E6"
+orangeBackgroundColor = "#F8ECE6"
+yellowBackgroundColor = "#FCF6E7"
+blueBackgroundColor = "#E7EFF4"
+greenBackgroundColor = "#E9F5EC"
+violetBackgroundColor = "#F0ECF8"
+grayBackgroundColor = "#F2F4F6"
+redTextColor = "#8F2D2D"
+orangeTextColor = "#8C4627"
+yellowTextColor = "#7C5600"
+blueTextColor = "#1F5A77"
+greenTextColor = "#1D5D34"
+violetTextColor = "#4E377C"
+grayTextColor = "#5C646D"
+linkColor = "#1F5A77"
+linkUnderline = true
+codeBackgroundColor = "#F3F7FA"
+font = "Graphik Web, sans-serif"
+baseFontSize = 14
+baseFontWeight = 400
+headingFont = "serif"
+headingFontSizes = ["2.8rem", "2.2rem", "1.7rem", "1.4rem", "1.2rem", "1rem"]
+headingFontWeights = [800, 700, 700, 650, 650, 650]
+codeFont = "monospace"
+codeFontSize = "0.9rem"
+codeFontWeight = 450
+baseRadius = "small"
+buttonRadius = "full"
+borderColor = "#D9E1E7"
+dataframeBorderColor = "#D9E1E7"
+dataframeHeaderBackgroundColor = "#E7EFF4"
+showWidgetBorder = true
+showSidebarBorder = true
+chartCategoricalColors = ["#256788", "#BA6036", "#2A7A45", "#6B4CA5", "#D79A2B", "#7A838C", "#B73A3A", "#4FA0C8", "#E19B6A", "#9CB6C9"]
+chartSequentialColors = ["#EEF4F8", "#DEEAF2", "#C9DDEB", "#B1CFE2", "#96BED6", "#77ACC8", "#5A98B8", "#3F84A8", "#2D6E91", "#1E5978"]
+
+[[theme.fontFaces]]
+family = "Graphik Web"
+url = "https://assets.bizjournals.com/static/fonts/Graphik/Graphik%20Web-Semibold.woff2"
+weight = 600
+style = "bold"
+
+[[theme.fontFaces]]
+family = "Graphik Web"
+url = "https://assets.bizjournals.com/static/fonts/Graphik/Graphik%20Web-Regular.woff2"
+weight = 400
+style = "normal"
+
+[theme.sidebar]
+primaryColor = "#BA6036"
+backgroundColor = "#F7F9FB"
+secondaryBackgroundColor = "#EAF0F5"
+textColor = "#1F2A33"
+linkColor = "#1F5A77"
+codeBackgroundColor = "#EDF3F7"
+headingFont = "Graphik Web, serif"
+headingFontSizes = ["1.7rem", "1.35rem", "1.1rem", "1rem", "0.9rem", "0.8rem"]
+headingFontWeights = [700, 650, 650, 600, 600, 600]
+baseRadius = "small"
+buttonRadius = "full"
+borderColor = "#D4DEE7"
+dataframeBorderColor = "#D4DEE7"
+dataframeHeaderBackgroundColor = "#EAF0F5"
+showWidgetBorder = true
