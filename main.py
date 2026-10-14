@@ -18,8 +18,8 @@ def load_data(path: str) -> pl.DataFrame:
 
 df = load_data("./data/dash_data.parquet")
 
-if "worst_toggle" not in st.session_state:
-    st.session_state.worst_toggle = False
+if "least_toggle" not in st.session_state:
+    st.session_state.least_toggle = False
 
 
 with (
@@ -27,16 +27,16 @@ with (
     st.container(width=800),
 ):
     st.title(
-        f"{'Worst' if st.session_state.worst_toggle else 'Best'} bang-for-your-buck college degrees",
+        f"*{'Least' if st.session_state.least_toggle else 'Most'}* bang-for-your-buck college degrees",
         width="content",
     )
-    worst = st.toggle(
-        f"Switch to {'**worst**' if not st.session_state.worst_toggle else '**best**'} bang-for-your-buck view",
-        key="worst_toggle",
+    least = st.toggle(
+        f"Switch to *{'**least**' if not st.session_state.least_toggle else '**most**'}* bang-for-your-buck view",
+        key="least_toggle",
         on_change=st.rerun,
     )
     st.markdown(
-        f"This data is ranked by `debt-to-income ratio` in {'descending' if st.session_state.worst_toggle else 'ascending'} order to show which school's degree programs land graduates in the {'**worst**' if st.session_state.worst_toggle else '**best**'} financial position. `Debt-to-income ratio` is calculated as the ratio of median debt from federal student loans at graduation to median earnings four years after graduation.",
+        f"This data is ranked by `debt-to-income ratio` in *{'descending' if st.session_state.least_toggle else 'ascending'}* order to show which school's degree programs land graduates in the *{'**worst**' if st.session_state.least_toggle else '**best**'}* financial position. `Debt-to-income ratio` is calculated as the ratio of median debt from federal student loans at graduation to median earnings four years after graduation.",
         width="content",
     )
     st.markdown(
@@ -50,12 +50,15 @@ with st.container(horizontal=True, horizontal_alignment="center"):
             options=sorted(df["state"].drop_nulls().unique().to_list()),
         )
 
-        df = df.filter(pl.col("state").is_in(selected_states or pl.col("state")))
+        if selected_states:
+            df = df.filter(pl.col("state").is_in(selected_states))
 
         selected_counties = st.multiselect(
             "Filter by county",
             options=sorted(df["county"].drop_nulls().unique().to_list()),
         )
+        if selected_counties:
+            df = df.filter(pl.col("county").is_in(selected_counties))
 
     with st.container():
         with st.container(border=True):
@@ -67,9 +70,8 @@ with st.container(horizontal=True, horizontal_alignment="center"):
             "Data points representing small samples are suppressed for privacy in the original dataset, and are marked as such."
         )
 
-        df = df.filter(
-            pl.col("institution").is_in(selected_institutions or pl.col("institution"))
-        )
+        if selected_institutions:
+            df = df.filter(pl.col("institution").is_in(selected_institutions))
 
     with st.container(border=True):
         selected_degree_levels = st.multiselect(
@@ -87,32 +89,22 @@ with st.container(horizontal=True, horizontal_alignment="center"):
             default=["Bachelor's", "Master's", "Doctoral"],
         )
 
-        df = df.filter(
-            pl.col("degree_level").is_in(
-                selected_degree_levels or pl.col("degree_level")
-            )
-        )
+        if selected_degree_levels:
+            df = df.filter(pl.col("degree_level").is_in(selected_degree_levels))
 
         selected_fields = st.multiselect(
             "Filter by field of study",
             options=sorted(df["field"].drop_nulls().unique().to_list()),
         )
+        if selected_fields:
+            df = df.filter(pl.col("field").is_in(selected_fields))
 
 
-df = (
-    df.filter(
-        # pl.col("institution").is_in(selected_institutions or pl.col("institution")),
-        pl.col("county").is_in(selected_counties or pl.col("county")),
-        # pl.col("degree_level").is_in(selected_degree_levels or pl.col("degree_level")),
-        pl.col("field").is_in(selected_fields or pl.col("field")),
+df = df.with_columns(
+    rank=pl.col("debt_to_income_ratio").rank(
+        descending=st.session_state.least_toggle, method="min"
     )
-    .with_columns(
-        rank=pl.col("debt_to_income_ratio").rank(
-            descending=st.session_state.worst_toggle, method="min"
-        )
-    )
-    .sort("rank", nulls_last=True)
-)
+).sort("rank", nulls_last=True)
 
 dollar_config = partial(st.column_config.NumberColumn, format="dollar")
 percent_config = partial(st.column_config.NumberColumn, format="%.2f%%")
@@ -141,7 +133,7 @@ st.dataframe(
 )
 
 st.caption(
-    "Debt and earnings data represents a two-year cohort of graduates, completing their studies during academic years 2017-2018 and 2018-2019. Only graduates not enrolled at any institution 4 years after graduation are included in earnings data."
+    "Debt and earnings data represents a two-year cohort of graduates, completing their studies during academic years 2017-2018 and 2018-2019. Only graduates not enrolled at any institution 4 years after graduation are included in earnings data. All dollar figures are adjusted to 2024 dollars."
 )
 
 with st.container(horizontal=True):
